@@ -150,6 +150,7 @@ class ResNet(nn.Module):
         self.layer3_output = x
         x = self.layer4(x)
         self.layer4_output = x # will be 3x10x2048 or 3x10x512
+        self.act_outputs = self.layer4_output
         # if pooling the layer4_output to 10x2048 then it can be compared with 
         # visual's corresponding 3d-cnn's output 10x2048
         # to learn the cross modal embedding

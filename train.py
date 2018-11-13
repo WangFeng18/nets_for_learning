@@ -15,7 +15,7 @@ os.environ["CUDA_VISIBLE_DEVICES"] = "2"
 class config:
     max_epoch = 400
     lr = 0.1
-    batch_size = 128
+    batch_size = 512 
     net = 'resnet18'
     num_classes = 10
 
@@ -46,7 +46,7 @@ def train(net, dataloader, config, load_model):
     optimizer = optim.SGD(net.parameters(), lr=config.lr, momentum=0.9, weight_decay=5e-4)
     #optimizer = optim.Adam(net.parameters(), lr=config.lr)
     # The initial lr will be decayed by gamma every step_size epochs
-    scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=150, gamma=0.1)
+    scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=100, gamma=0.1)
     writer = SummaryWriter()
     for i_epoch in range(config.max_epoch):
         scheduler.step()
@@ -78,10 +78,15 @@ def test(net, dataloader, load_model):
         input = data[0].float().cuda()
         label = data[1].long().cuda()
         output = net(input)
-        pred = output.argmax(1)
-        n_correct += (pred == label).sum()
-        n_total += data[0].size(0)
-    print n_correct.cpu().numpy()/n_total
+
+        _, predicted = output.max(1)
+        n_total += label.size(0)
+        n_correct += predicted.eq(label).sum().item()
+
+        #pred = output.argmax(1)
+        #n_correct += (pred == label).sum()
+        #n_total += data[0].size(0)
+    print n_correct/n_total
 
 
 
