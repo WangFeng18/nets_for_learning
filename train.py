@@ -52,6 +52,8 @@ def train(net, dataloader, config, load_model):
     # The initial lr will be decayed by gamma every step_size epochs
     scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=100, gamma=0.1)
     writer = SummaryWriter()
+    dummy_input = torch.Tensor(32, 3, 32, 32)
+    writer.add_graph(net, (dummy_input,))
     for i_epoch in range(config.max_epoch):
         scheduler.step()
         epoch_loss = 0.
